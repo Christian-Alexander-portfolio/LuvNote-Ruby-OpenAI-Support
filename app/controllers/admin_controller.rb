@@ -3,7 +3,7 @@ class AdminController < ApplicationController
   end
 
   def dashboard
-    @conversations = Conversation.order(last_activity_at: :desc).limit(50)
+    @conversations = Conversation.joins(:messages).distinct.order(last_activity_at: :desc).limit(50)
     @total_conversations = Conversation.count
     @total_messages = Message.count
     @conversations_today = Conversation.where("created_at >= ?", Time.current.beginning_of_day).count
