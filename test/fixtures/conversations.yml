@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  visitor_id: MyString
+  started_at: 2026-01-27 17:01:40
+  last_activity_at: 2026-01-27 17:01:40
+  user_agent: MyText
+  ip_hash: MyString
+
+two:
+  visitor_id: MyString
+  started_at: 2026-01-27 17:01:40
+  last_activity_at: 2026-01-27 17:01:40
+  user_agent: MyText
+  ip_hash: MyString
