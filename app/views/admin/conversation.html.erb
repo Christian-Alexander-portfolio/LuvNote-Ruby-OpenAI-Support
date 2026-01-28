@@ -1,0 +1,66 @@
+<div class="container admin-container">
+  <div class="header">
+    <h1>Conversation Details</h1>
+    <p class="subtitle">Session: <%= @conversation.id.to_s[-8..] %></p>
+  </div>
+
+  <div class="content">
+    <div class="conversation-meta">
+      <div class="meta-item">
+        <span class="meta-label">Visitor ID:</span>
+        <span class="meta-value"><%= @conversation.visitor_id.to_s[-12..] %></span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Started:</span>
+        <span class="meta-value"><%= @conversation.started_at&.strftime("%b %d, %Y at %I:%M %p") || "N/A" %></span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Last Activity:</span>
+        <span class="meta-value"><%= @conversation.last_activity_at&.strftime("%b %d, %Y at %I:%M %p") || "N/A" %></span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Total Messages:</span>
+        <span class="meta-value"><%= @messages.count %></span>
+      </div>
+      <% if @conversation.cleared_at.present? %>
+        <div class="meta-item">
+          <span class="meta-label">Cleared At:</span>
+          <span class="meta-value cleared"><%= @conversation.cleared_at.strftime("%b %d, %Y at %I:%M %p") %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="admin-chat-container">
+      <h2>Messages</h2>
+      <% if @messages.any? %>
+        <% @messages.each do |m| %>
+          <div class="message <%= m.role %> <%= @conversation.cleared_at.present? && m.created_at < @conversation.cleared_at ? 'cleared-message' : '' %>">
+            <div class="message-bubble">
+              <div class="message-meta">
+                <%= m.role == "user" ? "User" : "Assistant" %> · <%= m.created_at.strftime("%b %d, %I:%M:%S %p") %>
+                <% if m.role == "assistant" && m.confidence.present? %>
+                  · <%= (m.confidence * 100).round %>% confident
+                <% end %>
+                <% if @conversation.cleared_at.present? && m.created_at < @conversation.cleared_at %>
+                  · <span class="hidden-tag">Hidden from user</span>
+                <% end %>
+              </div>
+              <div class="message-content"><%= h(m.content.to_s.strip) %></div>
+              <% if m.link_url.present? %>
+                <div class="message-link-info">
+                  Link: <%= m.link_type %> - <%= m.link_url %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state">No messages in this conversation.</div>
+      <% end %>
+    </div>
+
+    <div class="admin-footer">
+      <a href="/admin/dashboard" class="back-link">Back to Dashboard</a>
+    </div>
+  </div>
+</div>

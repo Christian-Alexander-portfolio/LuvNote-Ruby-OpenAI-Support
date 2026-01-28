@@ -1,2 +1,95 @@
-<h1>Chat#index</h1>
-<p>Find me in app/views/chat/index.html.erb</p>
+<div class="container">
+  <div class="header">
+    <h1><%= image_tag "commercial png.png", alt: "LuvNote Support", class: "logo" %></h1>
+    <p class="subtitle">Ask about calendar, harmonies, playlists, music connections, messaging, or purchases.</p>
+  </div>
+
+  <div class="content">
+    <div class="chat-container">
+      <% if @messages.any? %>
+        <% @messages.each do |m| %>
+          <div class="message <%= m.role %>">
+            <div class="message-bubble">
+              <div class="message-meta"><%= m.role == "user" ? "You" : "Assistant" %> · <%= m.created_at.strftime("%I:%M %p") %><% if m.role == "assistant" && m.confidence.present? %> · <%= (m.confidence * 100).round %>%<% end %></div>
+              <div class="message-content"><%= h(m.content.to_s.strip) %></div>
+              <% if m.link_url.present? %><div class="message-link"><a href="<%= m.link_url %>" target="_blank" rel="noopener noreferrer"><%= m.link_type == "in_app" ? "Open in app" : "Read more" %></a></div><% end %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state">No messages yet — ask your first question.</div>
+      <% end %>
+    </div>
+
+    <form action="/chat" method="post" class="chat-form">
+      <%= csrf_meta_tags %>
+      <input
+        name="content"
+        placeholder="Example: I can't find any events in my calendar"
+        class="chat-input"
+        autocomplete="off"
+      />
+      <button type="submit" class="chat-submit">Send</button>
+    </form>
+
+    <div class="chat-footer">
+      <% if @messages.any? %>
+        <form action="/chat/clear" method="post" class="clear-form">
+          <%= csrf_meta_tags %>
+          <button type="submit" class="clear-button">Clear Conversation</button>
+        </form>
+      <% end %>
+      <button type="button" class="admin-button" onclick="showAdminModal()">Admin View</button>
+      <div class="session-info">
+        Session: <%= @conversation.id.to_s[-8..] %> · Visitor: <%= @conversation.visitor_id.to_s[-8..] %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="adminModal" class="admin-modal">
+  <div class="admin-modal-content">
+    <span class="admin-modal-close" onclick="hideAdminModal()">&times;</span>
+    <h2>Admin Access</h2>
+    <p>Enter the admin code to continue</p>
+    <input type="password" id="adminCode" class="admin-code-input" placeholder="Enter code" maxlength="4" />
+    <div id="adminError" class="admin-error"></div>
+    <button type="button" class="admin-submit" onclick="verifyAdminCode()">Submit</button>
+  </div>
+</div>
+
+<script>
+  function showAdminModal() {
+    document.getElementById('adminModal').style.display = 'flex';
+    document.getElementById('adminCode').value = '';
+    document.getElementById('adminError').textContent = '';
+    document.getElementById('adminCode').focus();
+  }
+
+  function hideAdminModal() {
+    document.getElementById('adminModal').style.display = 'none';
+  }
+
+  function verifyAdminCode() {
+    const code = document.getElementById('adminCode').value;
+    if (code === '1234') {
+      window.location.href = '/admin/dashboard';
+    } else {
+      document.getElementById('adminError').textContent = 'Incorrect code. Please try again.';
+      document.getElementById('adminCode').value = '';
+      document.getElementById('adminCode').focus();
+    }
+  }
+
+  document.getElementById('adminCode').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      verifyAdminCode();
+    }
+  });
+
+  document.getElementById('adminModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      hideAdminModal();
+    }
+  });
+</script>

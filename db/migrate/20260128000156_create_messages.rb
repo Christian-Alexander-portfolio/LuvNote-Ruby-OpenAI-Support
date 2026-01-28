@@ -6,7 +6,7 @@ class CreateMessages < ActiveRecord::Migration[8.1]
       t.text :content
       t.string :model
       t.float :confidence
-      t.references :chosen_support_page, null: false, foreign_key: true
+      t.references :chosen_support_page, null: true, foreign_key: { to_table: :support_pages }
       t.string :link_type
       t.text :link_url
       t.integer :latency_ms

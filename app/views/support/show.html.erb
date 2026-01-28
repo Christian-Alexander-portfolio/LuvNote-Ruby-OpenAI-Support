@@ -1,2 +1,24 @@
-<h1>Support#show</h1>
-<p>Find me in app/views/support/show.html.erb</p>
+<div class="container">
+  <div class="header">
+    <h1><%= @page.title %></h1>
+    <% if @page.summary.present? %>
+      <p class="subtitle"><%= @page.summary %></p>
+    <% end %>
+  </div>
+
+  <div class="support-page">
+    <a href="/" class="back-link">← Back to assistant</a>
+
+    <% if @page.in_app_url.present? %>
+      <div class="support-app-link">
+        <a href="<%= @page.in_app_url %>" target="_blank" rel="noopener noreferrer">
+          Open in app
+        </a>
+      </div>
+    <% end %>
+
+    <div class="support-content">
+      <pre><%= h(@page.body_md.to_s) %></pre>
+    </div>
+  </div>
+</div>

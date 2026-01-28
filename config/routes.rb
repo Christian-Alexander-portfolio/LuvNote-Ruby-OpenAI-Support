@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root "chat#index"
 
   post "/chat", to: "chat#create"
+  post "/chat/clear", to: "chat#clear"
 
   get "/support/:slug", to: "support#show", as: :support_page
 

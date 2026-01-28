@@ -1,2 +1,63 @@
-<h1>Admin#dashboard</h1>
-<p>Find me in app/views/admin/dashboard.html.erb</p>
+<div class="container admin-container">
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">LuvNote Support Analytics</p>
+  </div>
+
+  <div class="content">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value"><%= @total_conversations %></div>
+        <div class="stat-label">Total Conversations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= @total_messages %></div>
+        <div class="stat-label">Total Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= @conversations_today %></div>
+        <div class="stat-label">Conversations Today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= @messages_today %></div>
+        <div class="stat-label">Messages Today</div>
+      </div>
+    </div>
+
+    <div class="conversations-section">
+      <h2>Recent Conversations</h2>
+      <% if @conversations.any? %>
+        <div class="conversations-list">
+          <% @conversations.each do |conv| %>
+            <a href="<%= admin_conversation_path(conv) %>" class="conversation-card">
+              <div class="conversation-header">
+                <span class="conversation-id">Session: <%= conv.id.to_s[-8..] %></span>
+                <span class="conversation-time"><%= conv.last_activity_at&.strftime("%b %d, %I:%M %p") || "N/A" %></span>
+              </div>
+              <div class="conversation-stats">
+                <span><%= conv.messages.count %> messages</span>
+                <% if conv.cleared_at.present? %>
+                  <span class="cleared-badge">Cleared</span>
+                <% end %>
+              </div>
+              <div class="conversation-preview">
+                <% first_user_message = conv.messages.where(role: "user").first %>
+                <% if first_user_message %>
+                  "<%= truncate(first_user_message.content, length: 80) %>"
+                <% else %>
+                  <em>No messages</em>
+                <% end %>
+              </div>
+            </a>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-state">No conversations yet.</div>
+      <% end %>
+    </div>
+
+    <div class="admin-footer">
+      <a href="/" class="back-to-chat">Back to Chat</a>
+    </div>
+  </div>
+</div>
