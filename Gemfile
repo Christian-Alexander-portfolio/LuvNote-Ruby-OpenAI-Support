@@ -3,7 +3,7 @@ source "https://rubygems.org"
 ruby "3.4.8"
 
 # Rails
-gem "rails", "~> 8.1.2"
+gem "rails", "~> 8.1.3"
 
 # The modern asset pipeline for Rails
 gem "propshaft"
